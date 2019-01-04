@@ -297,11 +297,11 @@ public class Menu extends javax.swing.JFrame {
             }
           
             try {
-                //this.setBank(bisLogic.readFromDisk(file));
                 bisLogic.saveOnDisk(fileName, this.getBank());
             } catch (IOException ex) {
                 Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
             System.out.println("DDAAAVAAAAI ZA ZHIZN");
            
         }
@@ -327,11 +327,11 @@ public class Menu extends javax.swing.JFrame {
                     reloadTable(bankObject);
                    }
                     
-                } catch (IOException ex) {
-                    Logger.getLogger(GraphicalInterface.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(GraphicalInterface.class.getName()).log(Level.SEVERE, null, ex);
-                }     
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException | ClassNotFoundException ex) {
+                    Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+                }    
             }
         }
     }//GEN-LAST:event_openMenuItemActionPerformed
@@ -361,7 +361,7 @@ public class Menu extends javax.swing.JFrame {
                     }
                 
             } catch (IOException ex) {
-                Logger.getLogger(GraphicalInterface.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
             }
            
         }
@@ -424,6 +424,7 @@ public class Menu extends javax.swing.JFrame {
            model = (DefaultTableModel) accountTable.getModel();
            model.removeRow(row);
            JOptionPane.showMessageDialog(this, "Successfully removed!" );
+           
        }
        
 
