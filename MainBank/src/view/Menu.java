@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -231,7 +233,7 @@ public class Menu extends javax.swing.JFrame {
     private void addAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAccountActionPerformed
         
           AddAccountMenu menu = new AddAccountMenu(this, true, getBisLogic());
-        menu.setVisible(true);
+          menu.setVisible(true);
     
         if(menu.getBankAcc()!=null){
         addAccountToTable(menu.getBankAcc());
@@ -255,6 +257,7 @@ public class Menu extends javax.swing.JFrame {
        
        
         int selectedRow = accountTable.getSelectedRow(); 
+        System.out.println(selectedRow);
         if (selectedRow >= 0){
             if(this.getBank()==null){
                 System.out.println("AAA");
@@ -300,10 +303,7 @@ public class Menu extends javax.swing.JFrame {
                 bisLogic.saveOnDisk(fileName, this.getBank());
             } catch (IOException ex) {
                 Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            System.out.println("DDAAAVAAAAI ZA ZHIZN");
-           
+            }           
         }
     }//GEN-LAST:event_saveAllMenuItemActionPerformed
 
@@ -316,7 +316,6 @@ public class Menu extends javax.swing.JFrame {
             String fileName = file.toString();
             if(!fileName.toLowerCase().endsWith(".bof")){                
                 JOptionPane.showMessageDialog(this, "Unsupported type of file selected","Unsupported file", JOptionPane.ERROR_MESSAGE);
-                
             }
             else {
                 
@@ -357,8 +356,8 @@ public class Menu extends javax.swing.JFrame {
                     BankAccount bankAcc = this.getBank().getAccounts().get(selectedRow);
                     if ( bankAcc != null){
                         bisLogic.saveOnDisk(fileName, bankAcc);
-                        System.out.println("DDAAAVAAAAI ZA ZHIZN");
                     }
+                    
                 
             } catch (IOException ex) {
                 Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
@@ -378,10 +377,10 @@ public class Menu extends javax.swing.JFrame {
         
         private void reloadTable(Bank bankData) {
             
-                     boolean exist = false;
+                        boolean exist = false;
                         DefaultTableModel model = (DefaultTableModel) accountTable.getModel();
                         int size = model.getRowCount();
-                        System.out.println(size);
+                        System.out.println("Count rows : "+size);
                         if(!bankData.getAccounts().isEmpty()){
                         for(BankAccount bA : bankData.getAccounts()){
                    
@@ -393,13 +392,16 @@ public class Menu extends javax.swing.JFrame {
                             String NAME = model.getValueAt(i, 0).toString();
                              if(name.equals(NAME)){
                                exist=true;  
-                               System.out.println("bla bla");
+                               System.out.println("This account is existed");
                                break;
                           }
                         }
                         
             if(exist == false){
-            addAccountToTable(bA);
+            addAccountToTable(bA); 
+            if (!(bank.getAccounts().contains(bA))){
+                bank.getAccounts().add(bA);
+            }
      }
     }
    }

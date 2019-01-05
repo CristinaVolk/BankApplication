@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package view;
 
 import controller.BusinessLogic;
@@ -11,8 +7,8 @@ import model.BankAccount;
 import model.Exceptions.InsufficientFundsException;
 
 public class WithdrawalMenu extends javax.swing.JDialog {
-    private BusinessLogic bisLogic;
-    private BankAccount bankAcc;
+    private final BusinessLogic bisLogic;
+    private final BankAccount bankAcc;
 
     public WithdrawalMenu(java.awt.Frame parent, boolean modal, BusinessLogic bisLogic, BankAccount bankAcc) {
         super(parent, modal);
@@ -82,7 +78,7 @@ public class WithdrawalMenu extends javax.swing.JDialog {
             //verify if it's a positive number
             try{
                 amount = Double.parseDouble(amountField.getText());
-                int result  = JOptionPane.showConfirmDialog(this, "Withdraw $"+ amount+" from the account&");
+                int result  = JOptionPane.showConfirmDialog(this, "Withdraw $"+ amount+" from the account?");
                 if(result == JOptionPane.OK_OPTION){
                 bisLogic.withdraw(amount, bankAcc);
                 this.dispose();

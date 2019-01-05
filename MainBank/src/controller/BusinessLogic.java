@@ -42,11 +42,11 @@ public class BusinessLogic {
     }
     
     public BankAccount newAccount (BankAccount bankAcc){
-        System.out.println("Epta!");
+        System.out.println("Epta! adding new account");
         Bank banK = this.getBank();
         if (banK.getAccounts()==null){   
            
-            ArrayList <BankAccount> bankAccList = new ArrayList <>();            
+            ArrayList bankAccList = new ArrayList();            
             banK.setAccounts(bankAccList);
         }                  
      
@@ -88,16 +88,17 @@ public class BusinessLogic {
     }
     
     public void saveOnDisk( String filename, BankAccount bankAccount) throws FileNotFoundException, IOException{
-        try {
-            if (this.getBank().getAccounts()!=null && !(this.getBank().getAccounts().contains(bankAccount))){
+        try {           
+            if (this.getBank().getAccounts()!=null){
+                if (!(this.getBank().getAccounts().contains(bankAccount))){
                 this.getBank().getAccounts().add(bankAccount);
-            }
+               }
+            }             
             else {
                 ArrayList accounts = new ArrayList();
                 this.getBank().setAccounts(accounts);
                 this.getBank().getAccounts().add(bankAccount);       
-        }
-            
+            }            
                 FileOutputStream fOut = new FileOutputStream(filename);
                 ObjectOutputStream objOut = new ObjectOutputStream(fOut);
                 this.getDisc().save(objOut, (Object)this.getBank());
@@ -118,13 +119,15 @@ public class BusinessLogic {
                     FileInputStream fIn = new FileInputStream(file);
                     ObjectInputStream objIn = new ObjectInputStream(fIn);
                     bankObject = this.getDisc().read(objIn);
-                   if (bankObject instanceof Bank){
-                          if (this.getBank().getAccounts()==null){
+                    if (bankObject instanceof Bank){
+                        if (this.getBank().getAccounts()==null){
                             this.getBank().setAccounts(((Bank)bankObject).getAccounts());
                              }
                         else  {
-                        for (BankAccount bAc : ((Bank)bankObject).getAccounts()){             
-                           this.getBank().getAccounts().add(bAc);
+                           for (BankAccount bAc : ((Bank)bankObject).getAccounts()){  
+                                 if(!this.getBank().getAccounts().contains(bAc)){                                   
+                                 this.getBank().getAccounts().add(bAc);
+                               }
                          }
                       }
                    }
@@ -135,14 +138,13 @@ public class BusinessLogic {
                            this.getBank().setAccounts(accounts);
                            this.getBank().getAccounts().add((BankAccount)bankObject);
                        }
-                       else {
+                       else if(!this.getBank().getAccounts().contains(bankObject)){
                             this.getBank().getAccounts().add((BankAccount)bankObject);
                        }
-                   }
-                     
+                   }                    
                     
                     fIn.close();
-                   }
+                }
                    
                      catch (IOException | ClassNotFoundException ex){
                             Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
