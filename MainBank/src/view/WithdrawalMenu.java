@@ -74,10 +74,10 @@ public class WithdrawalMenu extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Withdrawal amount is required", "Input error", JOptionPane.WARNING_MESSAGE);
         }
         else {
-            double amount=0;
+            float amount=0;
             //verify if it's a positive number
             try{
-                amount = Double.parseDouble(amountField.getText());
+                amount = Float.parseFloat(amountField.getText());
                 int result  = JOptionPane.showConfirmDialog(this, "Withdraw $"+ amount+" from the account?");
                 if(result == JOptionPane.OK_OPTION){
                 bisLogic.withdraw(amount, bankAcc);

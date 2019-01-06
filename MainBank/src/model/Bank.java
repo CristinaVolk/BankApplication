@@ -2,7 +2,6 @@ package model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import model.Exceptions.AccNotFoundException;
 
 public class Bank implements Serializable {
      
@@ -16,12 +15,13 @@ public class Bank implements Serializable {
         this.accounts = accounts;
     }
     
-    public void AddAccount(BankAccount bA){
-            if(this.getAccounts().contains(bA)){
-                System.out.println("The bank account has already existed!\n");
-            }
-            else {
-                   this.getAccounts().add(bA);
-            }
+    public BankAccount AddAccount(BankAccount bA){
+        for (BankAccount bankA : this.getAccounts()){
+            if (bA.getOwner().getFirstName().equals(bankA.getOwner().getFirstName())){             
+                bA=null;
+            }           
+        }  
+        this.getAccounts().add(bA);
+        return bA;
     }
 }

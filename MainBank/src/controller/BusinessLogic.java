@@ -8,12 +8,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import model.*;
+import model.Exceptions.BankException;
 import model.Exceptions.InvalidAmountException;
 import model.Exceptions.InsufficientFundsException;
-import view.Menu;
 
 public class BusinessLogic {
     private IOBank disc;    
@@ -27,12 +26,13 @@ public class BusinessLogic {
         return bank;
     }
 
-    public void setBank(Bank bank) {
+    public void setBank(Bank bank) throws BankException {
+        if (bank == null){
+            throw new BankException();
+        }
         this.bank = bank;
     }
-
-
-
+    
     public IOBank getDisc() {
         return disc;
     }
@@ -50,22 +50,22 @@ public class BusinessLogic {
             banK.setAccounts(bankAccList);
         }                  
      
-            this.getBank().AddAccount(bankAcc);
-            return bankAcc;
+            BankAccount bankAc = this.getBank().AddAccount(bankAcc);
+            return bankAc;
     }
     
     public void removeAccount(BankAccount bankAcc){
         this.getBank().getAccounts().remove(bankAcc);
     }
     
-    public void makeDeposit(double amount, BankAccount account) throws InvalidAmountException{
+    public void makeDeposit(float amount, BankAccount account) throws InvalidAmountException{
         if (amount<0){
-            throw new InvalidAmountException();            
+            InvalidAmountException inVal = new InvalidAmountException();  
         }
         account.deposit(amount);
     }
     
-    public void withdraw (double amount, BankAccount account) throws InsufficientFundsException{
+    public void withdraw (float amount, BankAccount account) throws InsufficientFundsException{
         if (amount > account.getBalance()){
             throw new InsufficientFundsException();            
         }
@@ -73,22 +73,14 @@ public class BusinessLogic {
     }
     
     public void saveOnDisk( String filename, Bank bank) throws FileNotFoundException, IOException{
-        try {
-            try (FileOutputStream fOut = new FileOutputStream(filename)) {
+       
+                FileOutputStream fOut = new FileOutputStream(filename);
                 ObjectOutputStream objOut = new ObjectOutputStream(fOut);
                 this.getDisc().save(objOut, (Object)bank);
-            }
-        }
-        catch (FileNotFoundException ex){
-            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (IOException ex){
-            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-        }      
     }
     
     public void saveOnDisk( String filename, BankAccount bankAccount) throws FileNotFoundException, IOException{
-        try {           
+                   
             if (this.getBank().getAccounts()!=null){
                 if (!(this.getBank().getAccounts().contains(bankAccount))){
                 this.getBank().getAccounts().add(bankAccount);
@@ -102,19 +94,11 @@ public class BusinessLogic {
                 FileOutputStream fOut = new FileOutputStream(filename);
                 ObjectOutputStream objOut = new ObjectOutputStream(fOut);
                 this.getDisc().save(objOut, (Object)this.getBank());
-            
-        }          
-             catch (FileNotFoundException ex){
-                 Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-        }
-             catch (IOException ex){
-                 Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+                        
     }
     
      public Bank readFromDisk (File file) throws FileNotFoundException, IOException, ClassNotFoundException{
                   Object bankObject=null;
-                   try {
                        
                     FileInputStream fIn = new FileInputStream(file);
                     ObjectInputStream objIn = new ObjectInputStream(fIn);
@@ -144,11 +128,7 @@ public class BusinessLogic {
                    }                    
                     
                     fIn.close();
-                }
                    
-                     catch (IOException | ClassNotFoundException ex){
-                            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-                          }
        
                   return this.getBank();
      }

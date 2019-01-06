@@ -13,7 +13,7 @@ public class SavingAccount extends BankAccount implements Saving {
     }
 
     @Override
-    public void setInterest(double amount) {
+    public void setInterest(float amount) {
         double initialInterest = 0;
         if (amount > 10000) {
             initialInterest = 0.05;
@@ -26,7 +26,7 @@ public class SavingAccount extends BankAccount implements Saving {
 
 
     @Override
-    public double addInterest(double balance, double amount) {
+    public double addInterest(float balance, float amount) {
         
         double addedInterest=0;
         if (balance + amount > 10000){

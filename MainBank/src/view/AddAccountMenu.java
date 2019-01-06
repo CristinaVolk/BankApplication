@@ -7,8 +7,12 @@ package view;
 
 import javax.swing.JOptionPane;
 import controller.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import model.*;
+import model.Exceptions.AccNotFoundException;
+import model.Exceptions.InvalidAmountException;
 
 public class AddAccountMenu extends javax.swing.JDialog {
     
@@ -16,12 +20,19 @@ private BankAccount bankAcc=null;
 private Bank bank;
 private BusinessLogic bisLogic;
 
-    public BankAccount getBankAcc() {
+    public BankAccount getBankAcc()  {
+        
         return bankAcc;
     }
 
-    public void setBankAcc(BankAccount bankAcc) {
-        this.bankAcc = bankAcc;
+    public void setBankAcc(BankAccount bankAc) throws AccNotFoundException {
+       this.bankAcc =null;
+        if (bankAc==null){
+            AccNotFoundException accEx =  new AccNotFoundException(); 
+            JOptionPane.showMessageDialog(this, "Account has already exist", "Account error", JOptionPane.WARNING_MESSAGE);
+        }
+        this.bankAcc = bankAc; 
+        
     }
 
     public AddAccountMenu(java.awt.Frame parent, boolean modal, BusinessLogic bisLogic) {
@@ -137,7 +148,7 @@ private BusinessLogic bisLogic;
         // Verify FIelds
        String name;
        String lastname;
-       Double deposit = null;
+       Float deposit = null;
        BankAccount account=null;
         if(FirstNameField.getText().isEmpty()){
             JOptionPane.showMessageDialog(this, "FirstName must not be empty", "Input error", JOptionPane.WARNING_MESSAGE);
@@ -154,13 +165,13 @@ private BusinessLogic bisLogic;
             lastname = LastNameField.getText();
         }
         
-         if(DepositField.getText().isEmpty()){
+         if(DepositField.getText().isEmpty() ){
             JOptionPane.showMessageDialog(this, "Initial deposit must be entered", "Input error", JOptionPane.WARNING_MESSAGE);
             return;
         }
         else {
              try{
-                 deposit = Double.parseDouble(DepositField.getText());
+                 deposit = Float.parseFloat(DepositField.getText());
              }
              catch (NumberFormatException ex){
                  JOptionPane.showMessageDialog(this, "Initial deposit must be a nubmer", "Input error", JOptionPane.WARNING_MESSAGE);
@@ -186,12 +197,22 @@ private BusinessLogic bisLogic;
         }                
         
             bankAcc.setOwner(owner);
-            bankAcc.setBalance(deposit);
-            this.bisLogic.newAccount(bankAcc);
+           
+           
+           try {
+               bankAcc.setBalance(deposit);
+               this.setBankAcc(this.bisLogic.newAccount(bankAcc));
+           } 
+             catch (InvalidAmountException ex) {
+               JOptionPane.showMessageDialog(this, "Initial deposit must be positive", "Input error", JOptionPane.WARNING_MESSAGE);
+               ex.printStackTrace();
+           }catch (AccNotFoundException ex) {
+               JOptionPane.showMessageDialog(this, "Account has already existed", "Input error", JOptionPane.WARNING_MESSAGE);
+           }
+         
+           
             this.dispose();
-            JOptionPane.showMessageDialog(this, "Your account is successfully created with initial deposit :\n"
-                    +bankAcc.getBalance());             
-        }
+         } 
     }//GEN-LAST:event_OKButtonActionPerformed
 
    

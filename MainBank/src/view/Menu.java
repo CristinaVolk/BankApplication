@@ -5,9 +5,6 @@ import controller.BusinessLogic;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -15,6 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Bank;
 import model.BankAccount;
+import model.Exceptions.AccNotFoundException;
 
 public class Menu extends javax.swing.JFrame {
     
@@ -44,10 +42,8 @@ public class Menu extends javax.swing.JFrame {
         setSize(600,500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setVisible(true);      
-       // this.bank = new Bank();
+        setVisible(true); 
         model = (DefaultTableModel) accountTable.getModel();
-        //reloadTable();
     }     
     
 
@@ -234,23 +230,32 @@ public class Menu extends javax.swing.JFrame {
         
           AddAccountMenu menu = new AddAccountMenu(this, true, getBisLogic());
           menu.setVisible(true);
-    
-        if(menu.getBankAcc()!=null){
-        addAccountToTable(menu.getBankAcc());
-        } 
         
+        
+              
+                  
+                 if (menu.getBankAcc()!=null && menu.getBankAcc().getBalance()!=0) {
+                     
+                  JOptionPane.showMessageDialog(this, "Your account is successfully created with initial deposit :\n"
+                    +menu.getBankAcc().getBalance());      
+                  addAccountToTable(menu.getBankAcc());
+                  //JOptionPane.showMessageDialog(this, "Your account has existed :\n");
+              } 
     }//GEN-LAST:event_addAccountActionPerformed
 
     private void depositActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_depositActionPerformed
-              int selectedRow = accountTable.getSelectedRow(); 
-          System.out.println(selectedRow);
-          BankAccount bankAcc = bank.getAccounts().get(selectedRow);
+                int selectedRow = accountTable.getSelectedRow(); 
+                System.out.println(selectedRow);
+                BankAccount bankAcc = bank.getAccounts().get(selectedRow);
         
-        if ( bankAcc != null){
-            DepositMenu menu = new DepositMenu(this, true, getBisLogic(), bankAcc);
-            menu.setVisible(true);
-            reloadCustomerRowData(selectedRow, bankAcc);
-        }
+                if ( bankAcc != null){
+                    DepositMenu menu = new DepositMenu(this, true, getBisLogic(), bankAcc);
+                    menu.setVisible(true);
+                    reloadCustomerRowData(selectedRow, bankAcc);
+                 }
+                else {
+                    Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, "Bank Account doesn't exist");
+                }
     }//GEN-LAST:event_depositActionPerformed
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
@@ -266,11 +271,15 @@ public class Menu extends javax.swing.JFrame {
         if (bankAcc != null){
            int result = JOptionPane.showConfirmDialog(this, "Are you sure to remove your account?");
            if(result == JOptionPane.OK_OPTION){
-        getBisLogic().removeAccount(bankAcc);
-        removeAccountFromTheTable(selectedRow);
+              
+            getBisLogic().removeAccount(bankAcc);               
+            removeAccountFromTheTable(selectedRow);
           }
         }
        }
+        else {
+            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, "You haven't selected account");
+        }
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void withdrawActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_withdrawActionPerformed
@@ -280,6 +289,9 @@ public class Menu extends javax.swing.JFrame {
             WithdrawalMenu menu = new WithdrawalMenu(this, true, getBisLogic(), bankAcc);
             menu.setVisible(true);
             reloadCustomerRowData(selectedRow, bankAcc);
+        } 
+        else {
+            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, "Bank Account doesn't exist");
         }
     }//GEN-LAST:event_withdrawActionPerformed
 
@@ -301,9 +313,12 @@ public class Menu extends javax.swing.JFrame {
           
             try {
                 bisLogic.saveOnDisk(fileName, this.getBank());
-            } catch (IOException ex) {
+            }
+             catch (FileNotFoundException ex){
                 Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-            }           
+        }   catch (IOException ex) {
+                Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_saveAllMenuItemActionPerformed
 
@@ -330,7 +345,7 @@ public class Menu extends javax.swing.JFrame {
                     Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException | ClassNotFoundException ex) {
                     Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-                }    
+                }   
             }
         }
     }//GEN-LAST:event_openMenuItemActionPerformed
@@ -361,18 +376,18 @@ public class Menu extends javax.swing.JFrame {
                 
             } catch (IOException ex) {
                 Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-            }
            
         }
+      }
     }//GEN-LAST:event_SaveAccountMenuItemActionPerformed
 
     
         private void reloadCustomerRowData(int selectedRow, BankAccount bankAcc) {
             
-        model = (DefaultTableModel)accountTable.getModel();
-        model.setValueAt(bankAcc.getOwner().getFirstName(), selectedRow, 0);
-        model.setValueAt(bankAcc.getOwner().getLastName(), selectedRow, 1);
-        model.setValueAt(String.format("%.2f", bankAcc.getBalance()), selectedRow, 2);
+            model = (DefaultTableModel)accountTable.getModel();
+            model.setValueAt(bankAcc.getOwner().getFirstName(), selectedRow, 0);
+            model.setValueAt(bankAcc.getOwner().getLastName(), selectedRow, 1);
+            model.setValueAt(String.format("%.2f", bankAcc.getBalance()), selectedRow, 2);
     }
         
         private void reloadTable(Bank bankData) {
@@ -397,15 +412,15 @@ public class Menu extends javax.swing.JFrame {
                           }
                         }
                         
-            if(exist == false){
-            addAccountToTable(bA); 
-            if (!(bank.getAccounts().contains(bA))){
-                bank.getAccounts().add(bA);
-            }
-     }
-    }
-   }
- }
+                            if(exist == false){
+                            addAccountToTable(bA); 
+                            if (!(bank.getAccounts().contains(bA))){
+                                bank.getAccounts().add(bA);
+                            }
+                        }
+                       }
+                      }
+                    }
     
 
         private void setAccountButtonsActive(boolean active) { 

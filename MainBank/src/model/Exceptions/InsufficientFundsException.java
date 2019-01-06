@@ -1,14 +1,13 @@
 
 package model.Exceptions;
 
+import javax.swing.JOptionPane;
+
 
 public class InsufficientFundsException extends Exception {
-    public InsufficientFundsException() {       
-    } 
-
-    public InsufficientFundsException(String msg) {
-         super("You have insufficient funds to complete the transaction.");
+    public InsufficientFundsException() {      
+        System.out.println("You have insufficient funds to complete the transaction.");       
+            
     }
-
    
 }

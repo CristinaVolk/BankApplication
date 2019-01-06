@@ -3,12 +3,8 @@ package model.Exceptions;
 
 
 public class InvalidAmountException extends Exception {
-    public InvalidAmountException() {       
+    public InvalidAmountException() {  
+        System.out.println("Invalid amount for transaction");
     } 
-
-    public InvalidAmountException(String msg) {
-        super("Invalid amount for transaction");
-    }
-
    
 }
