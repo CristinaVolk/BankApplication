@@ -2,6 +2,7 @@
 import view.Menu;
 import controller.*;
 import model.*;
+import model.Exceptions.BankException;
 
 public class MainBank {
 
@@ -12,9 +13,14 @@ public class MainBank {
         BusinessLogic BLcontroller = new BusinessLogic();
         Menu menu = new Menu();
         
-        menu.setBisLogic(BLcontroller);      
-        BLcontroller.setBank(mainBank); 
+        menu.setBisLogic(BLcontroller); 
+        try {
+            BLcontroller.setBank(mainBank); 
         menu.setBank(mainBank);
+        }
+        catch (BankException ex){
+            System.out.println(ex);
+        }
         
         
     }

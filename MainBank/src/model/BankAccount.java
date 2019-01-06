@@ -1,20 +1,26 @@
 
 package model;
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import model.Exceptions.InvalidAmountException;
 
 public class BankAccount implements Account, Serializable {
     
     public BankAccount(){};
     
-      private double balance=0;
+      private float balance=0;
       private Owner owner;
 
-    public double getBalance() {
+    public float getBalance() {
         return balance;
     }
 
-    public void setBalance(double balance) {
-        this.balance = balance;
+    public void setBalance(float balance) throws InvalidAmountException{        
+        if (balance <0){
+             throw new InvalidAmountException();
+        }
+        else this.balance = balance;
     }
 
     public Owner getOwner() {
@@ -26,14 +32,22 @@ public class BankAccount implements Account, Serializable {
     }
 
     @Override
-    public void deposit(double amount) {
-        this.setBalance(this.getBalance()+amount);
+    public void deposit(float amount) {
+        try {
+            this.setBalance(this.getBalance()+amount);
+        } catch (InvalidAmountException ex) {
+            Logger.getLogger(BankAccount.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }
 
     @Override
-    public void withdraw(double amount) {
-      this.setBalance(this.getBalance()-amount);
+    public void withdraw(float amount) {
+        try {
+            this.setBalance(this.getBalance()-amount);
+        } catch (InvalidAmountException ex) {
+            Logger.getLogger(BankAccount.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     
@@ -43,9 +57,9 @@ public class BankAccount implements Account, Serializable {
         return interest;
     }
 
-    public void setInterest(double amount) {};
+    public void setInterest(float amount) {};
 
-    public double addInterest(double balance, double deposit) {        
+    public double addInterest(float balance, float deposit) {        
         return interest;
     }
   }

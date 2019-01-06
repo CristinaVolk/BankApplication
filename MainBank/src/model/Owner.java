@@ -11,14 +11,6 @@ public class Owner implements Serializable {
     public Owner(){
     }
     
-    @Override
-    public String toString(){
-        return "\nCustomer Information\n" +
-                "First Name: " + getFirstName() + "\n" + 
-                "Last Name: " + getLastName();
-               
-    }
-
     public String getFirstName() {
         return firstName;
     }
