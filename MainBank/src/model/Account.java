@@ -2,8 +2,8 @@ package model;
 
 public interface Account {
     
-  public void deposit (double amount);
+  public void deposit (float amount);
   
-  public void withdraw (double amount);
+  public void withdraw (float amount);
     
 }

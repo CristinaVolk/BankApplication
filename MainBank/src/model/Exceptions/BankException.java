@@ -5,11 +5,7 @@ package model.Exceptions;
 public class BankException extends Exception {
 
 
-    public BankException() {
-    }
-
-
-    public BankException(String msg) {
-        super(msg);
-    }
+    public BankException() {        
+        System.out.println("The Bank doesn't exist\n");
+    } 
 }

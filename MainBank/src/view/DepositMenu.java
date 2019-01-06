@@ -2,6 +2,8 @@
 package view;
 
 import controller.BusinessLogic;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import model.BankAccount;
 import model.Exceptions.InvalidAmountException;
@@ -77,11 +79,11 @@ public class DepositMenu extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Deposit amount is required", "Input error", JOptionPane.WARNING_MESSAGE);
         }
         else {
-            double deposit=0;
+            float deposit=0;
             int result=0;
             //verify if it's a positive number
             try{
-                deposit = Double.parseDouble(amountField.getText());
+                deposit = Float.parseFloat(amountField.getText());
                 
                 if (bankAcc instanceof SavingAccount){
                   
@@ -100,9 +102,10 @@ public class DepositMenu extends javax.swing.JDialog {
             }
              catch (NumberFormatException ex){
                  JOptionPane.showMessageDialog(this, "Deposit must be a nubmer", "Input error", JOptionPane.WARNING_MESSAGE);
-             } catch (InvalidAmountException ex) { 
-                JOptionPane.showMessageDialog(this, "Deposit is invalid","Deposit warnings", JOptionPane.WARNING_MESSAGE);
-            } 
+             } catch (InvalidAmountException ex) {  
+                Logger.getLogger(DepositMenu.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Deposit must be positive", "Input error", JOptionPane.WARNING_MESSAGE);
+            }  
         }
     }//GEN-LAST:event_depositButtonActionPerformed
 

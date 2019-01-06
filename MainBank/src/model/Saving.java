@@ -3,9 +3,9 @@ package model;
 
 public interface Saving {
     
-    public void setInterest(double deposit);
+    public void setInterest(float deposit);
     public double getInterest();
-    public double addInterest(double balance, double amount);
+    public double addInterest(float balance, float amount);
     
     
 }
